@@ -11,7 +11,8 @@ import {
     EyeOutlined,
     ClockCircleOutlined,
     CheckCircleOutlined,
-    ShopOutlined
+    ShopOutlined,
+    AlertOutlined
 } from '@ant-design/icons';
 import api from '../api';
 
@@ -61,17 +62,35 @@ const PharmacyDashboard = ({ user }) => {
     };
 
     const renderStatCard = (title, value, icon, color) => (
-        <div className="glass-card" style={{ padding: '24px', flex: 1 }}>
+        <div className="glass-card" style={{
+            padding: '24px',
+            flex: 1,
+            position: 'relative',
+            overflow: 'hidden'
+        }}>
             <div style={{
-                width: '50px', height: '50px', borderRadius: '15px',
-                background: `${color}20`, color: color,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
-                marginBottom: '16px'
+                position: 'absolute',
+                top: '-20px',
+                right: '-20px',
+                width: '100px',
+                height: '100px',
+                background: `${color}10`,
+                filter: 'blur(40px)',
+                borderRadius: '50%'
+            }} />
+            <div style={{
+                width: '44px', height: '44px', borderRadius: '12px',
+                background: `${color}15`, color: color,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px',
+                marginBottom: '20px',
+                border: `1px solid ${color}30`
             }}>
                 {icon}
             </div>
-            <Text type="secondary" strong style={{ fontSize: '13px', textTransform: 'uppercase' }}>{title}</Text>
-            <div style={{ fontSize: '26px', fontWeight: 800, marginTop: '4px' }}>{value}</div>
+            <Text type="secondary" strong style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', display: 'block', marginBottom: '4px' }}>{title}</Text>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                <div style={{ fontSize: '28px', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>{value}</div>
+            </div>
         </div>
     );
 
@@ -113,21 +132,30 @@ const PharmacyDashboard = ({ user }) => {
     return (
         <div className="glass-appear">
             <div className="glass-card" style={{
-                padding: '40px',
+                padding: '24px 32px',
                 marginBottom: '40px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '24px',
                 background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1))'
             }}>
-                <Space size="large">
-                    <Avatar size={70} icon={<ShopOutlined />} style={{ background: '#3b82f6', boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)' }} />
+                <Space size="large" align="center" style={{ flexWrap: 'wrap' }}>
+                    <Avatar size={60} icon={<ShopOutlined />} style={{ background: '#3b82f6', boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)' }} />
                     <div>
-                        <Title level={2} style={{ margin: 0, fontWeight: 800 }}>{user.pharmacy?.pharmacy_name || user.username}</Title>
-                        <Text type="secondary">Partner ID: {user.pharmacy?.license_number || 'ST-9922'}</Text>
+                        <Title level={3} style={{ margin: 0, fontWeight: 800 }}>{user.pharmacy?.pharmacy_name || user.username}</Title>
+                        <Text type="secondary" style={{ fontSize: '13px' }}>Partner ID: {user.pharmacy?.license_number || 'ST-9922'}</Text>
                     </div>
                 </Space>
-                <Button type="primary" size="large" icon={<ShoppingCartOutlined />} onClick={() => window.location.href = '/products'} style={{ height: '54px', padding: '0 32px' }}>
+                <Button
+                    type="primary"
+                    size="large"
+                    icon={<ShoppingCartOutlined />}
+                    onClick={() => window.location.href = '/products'}
+                    style={{ height: '50px', borderRadius: '12px', fontWeight: 600 }}
+                    block={window.innerWidth < 576}
+                >
                     New Purchase
                 </Button>
             </div>
@@ -141,22 +169,85 @@ const PharmacyDashboard = ({ user }) => {
 
             <div className="glass-card" style={{ padding: '24px' }}>
                 <Title level={4} style={{ marginBottom: '24px', fontWeight: 700 }}>Order Repository</Title>
-                <Table className="glass-table" columns={columns} dataSource={orders} loading={loading} rowKey="id" pagination={{ pageSize: 7 }} />
+                <Table
+                    className="glass-table"
+                    columns={columns}
+                    dataSource={orders}
+                    loading={loading}
+                    rowKey="id"
+                    pagination={{ pageSize: 7 }}
+                    scroll={{ x: 'max-content' }}
+                />
             </div>
 
-            <Modal title="Digital Order Record" open={isViewModalVisible} onCancel={() => setIsViewModalVisible(false)} footer={null} width={800} centered>
+            <Modal
+                title={<Title level={4} style={{ margin: 0 }}>Digital Order Record</Title>}
+                open={isViewModalVisible}
+                onCancel={() => setIsViewModalVisible(false)}
+                footer={null}
+                width={700}
+                centered
+                bodyStyle={{ padding: '0' }}
+                className="glass-modal"
+            >
                 {selectedOrder && (
-                    <div style={{ padding: '16px' }}>
-                        <Descriptions bordered column={2} size="small">
-                            <Descriptions.Item label="Ref">{selectedOrder.order_number}</Descriptions.Item>
-                            <Descriptions.Item label="Status"><Tag color="blue">{selectedOrder.status.toUpperCase()}</Tag></Descriptions.Item>
-                            <Descriptions.Item label="Total Amount">₹{selectedOrder.total_amount}</Descriptions.Item>
-                            <Descriptions.Item label="Paid Amount"><Text type="success">₹{selectedOrder.paid_amount}</Text></Descriptions.Item>
-                            <Descriptions.Item label="Balance" span={2}><Text type="danger" strong>₹{selectedOrder.balance_amount}</Text></Descriptions.Item>
-                        </Descriptions>
-                        <Divider />
-                        <Title level={5} style={{ fontSize: '14px', marginBottom: '12px' }}>Items Summary</Title>
-                        <Table size="small" dataSource={selectedOrder.items} pagination={false} rowKey="id" columns={[{ title: 'Item', dataIndex: ['product_details', 'name'] }, { title: 'Qty', dataIndex: 'quantity' }, { title: 'Total', dataIndex: 'total_price', render: v => `₹${v}` }]} />
+                    <div style={{ padding: '24px' }}>
+                        <div style={{
+                            background: 'rgba(59, 130, 246, 0.05)',
+                            padding: '20px',
+                            borderRadius: '20px',
+                            marginBottom: '24px',
+                            border: '1px solid rgba(59, 130, 246, 0.1)',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <div>
+                                <Text type="secondary" style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Order Identifier</Text>
+                                <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--accent-blue)' }}>{selectedOrder.order_number}</div>
+                            </div>
+                            <Tag color={selectedOrder.status === 'pending' ? 'orange' : selectedOrder.status === 'rejected' ? 'red' : 'green'} style={{
+                                borderRadius: '8px',
+                                padding: '4px 12px',
+                                border: 'none',
+                                fontWeight: 700
+                            }}>
+                                {selectedOrder.status.toUpperCase()}
+                            </Tag>
+                        </div>
+
+                        <Row gutter={[16, 16]} style={{ marginBottom: '32px' }}>
+                            {[
+                                { label: 'Total Amount', value: `₹${selectedOrder.total_amount}`, color: '#0f172a' },
+                                { label: 'Paid Amount', value: `₹${selectedOrder.paid_amount}`, color: 'var(--accent-emerald)' },
+                                { label: 'Outstanding Balance', value: `₹${selectedOrder.balance_amount}`, color: '#ef4444', bold: true },
+                                { label: 'Payment Status', value: selectedOrder.payment_status.toUpperCase(), color: '#3b82f6' }
+                            ].map((info, idx) => (
+                                <Col span={12} key={idx}>
+                                    <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
+                                        <Text type="secondary" style={{ fontSize: '11px', display: 'block', marginBottom: '4px' }}>{info.label}</Text>
+                                        <Text style={{ fontSize: '16px', fontWeight: info.bold ? 800 : 700, color: info.color }}>{info.value}</Text>
+                                    </div>
+                                </Col>
+                            ))}
+                        </Row>
+
+                        <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ width: '4px', height: '16px', background: 'var(--accent-blue)', borderRadius: '2px' }} />
+                            <Title level={5} style={{ margin: 0, fontSize: '14px' }}>Procurement Details</Title>
+                        </div>
+                        <Table
+                            size="small"
+                            dataSource={selectedOrder.items}
+                            pagination={false}
+                            rowKey="id"
+                            className="glass-table"
+                            columns={[
+                                { title: 'PRODUCT', dataIndex: ['product_details', 'name'], render: t => <Text strong>{t}</Text> },
+                                { title: 'QTY', dataIndex: 'quantity', align: 'center' },
+                                { title: 'TOTAL', dataIndex: 'total_price', align: 'right', render: v => <Text strong>₹{v}</Text> }
+                            ]}
+                        />
                     </div>
                 )}
             </Modal>

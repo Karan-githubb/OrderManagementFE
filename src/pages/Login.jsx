@@ -40,15 +40,36 @@ const Login = ({ fetchUser }) => {
             {/* Left side: Premium Branding Panel */}
             <div style={{
                 flex: '1',
-                background: 'var(--grad-premium)',
+                position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
                 padding: '60px',
                 color: '#fff',
-                position: 'relative',
                 overflow: 'hidden'
             }} className="login-panel">
+                {/* Background Image with Overlay */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: 'url("/login_bg.png")',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    zIndex: 0
+                }} />
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(99, 102, 241, 0.8) 100%)',
+                    zIndex: 1
+                }} />
+
                 <div style={{ position: 'relative', zIndex: 2 }}>
                     <div style={{ marginBottom: '40px', display: 'flex', alignItems: 'center' }}>
                         <MedicineBoxOutlined style={{ fontSize: '40px', color: '#fff', marginRight: '16px' }} />

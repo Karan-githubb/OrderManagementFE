@@ -57,20 +57,20 @@ const Reports = () => {
 
     return (
         <div style={{ padding: '24px' }}>
-            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
                 <div>
                     <Title level={2} style={{ margin: 0, fontWeight: 800, letterSpacing: '-1px' }}>
                         Intelligence Reports
                     </Title>
                     <Text type="secondary">Financial and distribution performance diagnostics</Text>
                 </div>
-                <Space>
+                <Space wrap>
                     <RangePicker
                         value={dateRange}
                         onChange={setDateRange}
                         style={{ borderRadius: '10px' }}
                     />
-                    <Button icon={<DownloadOutlined />}>Export PDF</Button>
+                    <Button icon={<DownloadOutlined />} block={window.innerWidth < 576}>Export PDF</Button>
                 </Space>
             </div>
 
@@ -137,9 +137,9 @@ const Reports = () => {
             </Row>
 
             <Row gutter={[24, 24]} style={{ marginTop: '24px' }}>
-                <Col span={16}>
+                <Col xs={24} lg={16}>
                     <Card title={<Space><LineChartOutlined /> Revenue Velocity Trend</Space>} className="glass-card">
-                        <div style={{ height: '400px' }}>
+                        <div style={{ height: '350px' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={reportData?.trend}>
                                     <defs>
@@ -159,9 +159,9 @@ const Reports = () => {
                         </div>
                     </Card>
                 </Col>
-                <Col span={8}>
-                    <Card title={<Space><BarChartOutlined /> Top Performers (By Buy Volume)</Space>} className="glass-card">
-                        <div style={{ height: '400px' }}>
+                <Col xs={24} lg={8}>
+                    <Card title={<Space><BarChartOutlined /> Top Performers (By Volume)</Space>} className="glass-card">
+                        <div style={{ height: '350px' }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={reportData?.top_pharmacies} layout="vertical">
                                     <XAxis type="number" hide />
@@ -181,6 +181,7 @@ const Reports = () => {
                         <Table
                             dataSource={reportData?.top_pharmacies}
                             pagination={false}
+                            scroll={{ x: 'max-content' }}
                             columns={[
                                 { title: 'Partner Name', dataIndex: 'pharmacy__pharmacy_name', key: 'name', render: t => <Text strong>{t}</Text> },
                                 { title: 'Purchase Capacity', dataIndex: 'total', key: 'total', render: v => `₹${v.toLocaleString()}` },

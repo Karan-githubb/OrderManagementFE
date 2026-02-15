@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Typography, Button, Row, Col, Card, Space, Layout, Divider, Statistic, Tag } from 'antd';
 import {
     ArrowRightOutlined,
@@ -15,6 +15,46 @@ import { message } from 'antd';
 
 const { Title, Paragraph, Text } = Typography;
 
+const TiltCard = ({ children, style, delay = '0s' }) => {
+    const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e) => {
+        const card = e.currentTarget;
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (centerY - y) / 10;
+        const rotateY = (x - centerX) / 10;
+
+        setRotate({ x: rotateX, y: rotateY });
+    };
+
+    const handleMouseLeave = () => {
+        setRotate({ x: 0, y: 0 });
+    };
+
+    return (
+        <div
+            className="glass-card glass-appear"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                ...style,
+                transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg)`,
+                transition: rotate.x === 0 ? 'all 0.5s ease' : 'none',
+                animationDelay: delay,
+                transformStyle: 'preserve-3d'
+            }}
+        >
+            <div style={{ transform: 'translateZ(30px)', transformStyle: 'preserve-3d' }}>
+                {children}
+            </div>
+        </div>
+    );
+};
+
 const LandingPage = () => {
     const navigate = useNavigate();
 
@@ -23,11 +63,12 @@ const LandingPage = () => {
             {/* Premium Hero Section */}
             <div style={{
                 position: 'relative',
-                padding: '120px 40px',
-                minHeight: '600px',
+                padding: '160px 40px',
+                minHeight: '750px',
                 display: 'flex',
                 alignItems: 'center',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                background: '#0f172a'
             }}>
                 <img
                     src="/medical_supplies_hero_1771057146600.png"
@@ -40,42 +81,98 @@ const LandingPage = () => {
                         height: '100%',
                         objectFit: 'cover',
                         zIndex: 0,
-                        filter: 'brightness(0.3)'
+                        filter: 'brightness(0.4) saturate(1.2)'
                     }}
                 />
 
-                <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 1, color: '#fff' }}>
+                {/* Advanced Gradient Overlay for Readability */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 50%, rgba(15, 23, 42, 0.2) 100%)',
+                    zIndex: 1
+                }} />
+
+                <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 2, color: '#fff' }}>
                     <Row gutter={48} align="middle">
                         <Col xs={24} lg={16}>
-                            <Tag color="#1677ff" style={{ marginBottom: '16px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                #1 Surgical Distribution Network
-                            </Tag>
-                            <Title level={1} style={{ color: '#fff', fontSize: '64px', fontWeight: 800, lineHeight: 1.1, marginBottom: '24px' }}>
-                                Precision Supplies <br />
-                                <span style={{ color: '#1677ff' }}>Seamlessly Delivered.</span>
-                            </Title>
-                            <Paragraph style={{ color: 'rgba(255,255,255,0.8)', fontSize: '22px', marginBottom: '40px', maxWidth: '700px' }}>
-                                The most trusted wholesale platform for hospitals and pharmacies.
-                                High-quality instruments, certified disposables, and real-time inventory.
-                            </Paragraph>
-                            <Space size="middle">
-                                <Button
-                                    type="primary"
-                                    size="large"
-                                    onClick={() => navigate('/products')}
-                                    style={{ height: '56px', padding: '0 40px', fontSize: '18px', borderRadius: '12px', fontWeight: 600 }}
-                                >
-                                    Explore Catalog <ArrowRightOutlined />
-                                </Button>
-                                <Button
-                                    size="large"
-                                    ghost
-                                    onClick={() => message.info("Professional onboarding is by invitation. Contact our sales team at onboarding@surgicaldistro.com")}
-                                    style={{ height: '56px', padding: '0 40px', fontSize: '18px', borderRadius: '12px' }}
-                                >
-                                    Become a Partner
-                                </Button>
-                            </Space>
+                            <div className="glass-appear float-3d">
+                                <Tag color="#1677ff" style={{
+                                    marginBottom: '24px',
+                                    borderRadius: '6px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '2px',
+                                    padding: '4px 12px',
+                                    fontWeight: 700,
+                                    border: 'none',
+                                    background: 'rgba(22, 119, 255, 0.2)',
+                                    color: '#60a5fa'
+                                }}>
+                                    #1 Surgical Distribution Network
+                                </Tag>
+                                <Title level={1} style={{
+                                    color: '#fff',
+                                    fontSize: 'clamp(40px, 5vw, 72px)',
+                                    fontWeight: 900,
+                                    lineHeight: 1.05,
+                                    marginBottom: '32px',
+                                    textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+                                }}>
+                                    Precision Supplies <br />
+                                    <span style={{
+                                        background: 'linear-gradient(to right, #60a5fa, #a78bfa)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                    }}>Seamlessly Delivered.</span>
+                                </Title>
+                                <Paragraph style={{
+                                    color: 'rgba(255,255,255,0.9)',
+                                    fontSize: '22px',
+                                    marginBottom: '48px',
+                                    maxWidth: '650px',
+                                    lineHeight: 1.6,
+                                    fontWeight: 400
+                                }}>
+                                    The most trusted wholesale platform for hospitals and pharmacies.
+                                    High-quality instruments, certified disposables, and real-time inventory at your fingertips.
+                                </Paragraph>
+                                <Space size="large">
+                                    <Button
+                                        type="primary"
+                                        size="large"
+                                        onClick={() => navigate('/products')}
+                                        style={{
+                                            height: '64px',
+                                            padding: '0 48px',
+                                            fontSize: '18px',
+                                            borderRadius: '16px',
+                                            fontWeight: 700,
+                                            boxShadow: '0 10px 20px rgba(22, 119, 255, 0.3)'
+                                        }}
+                                    >
+                                        Explore Catalog <ArrowRightOutlined />
+                                    </Button>
+                                    <Button
+                                        size="large"
+                                        ghost
+                                        onClick={() => message.info("Professional onboarding is by invitation. Contact our sales team at onboarding@surgicaldistro.com")}
+                                        style={{
+                                            height: '64px',
+                                            padding: '0 40px',
+                                            fontSize: '18px',
+                                            borderRadius: '16px',
+                                            borderWidth: '2px',
+                                            fontWeight: 600,
+                                            backdropFilter: 'blur(10px)'
+                                        }}
+                                    >
+                                        Become a Partner
+                                    </Button>
+                                </Space>
+                            </div>
                         </Col>
                     </Row>
                 </div>
@@ -91,15 +188,17 @@ const LandingPage = () => {
                         { title: 'Support', value: '24/7', icon: <TeamOutlined /> }
                     ].map((stat, idx) => (
                         <Col xs={12} md={6} key={idx}>
-                            <div className="glass-card glass-appear" style={{
-                                padding: '32px 24px',
-                                textAlign: 'center',
-                                animationDelay: `${idx * 0.1}s`
-                            }}>
+                            <TiltCard
+                                delay={`${idx * 0.1}s`}
+                                style={{
+                                    padding: '32px 24px',
+                                    textAlign: 'center',
+                                }}
+                            >
                                 <div style={{ color: 'var(--accent-blue)', fontSize: '32px', marginBottom: '12px' }}>{stat.icon}</div>
                                 <Title level={2} style={{ margin: 0, fontWeight: 800, letterSpacing: '-1px' }}>{stat.value}</Title>
                                 <Text strong style={{ color: 'var(--text-muted)', textTransform: 'uppercase', fontSize: '11px', letterSpacing: '1px' }}>{stat.title}</Text>
-                            </div>
+                            </TiltCard>
                         </Col>
                     ))}
                 </Row>
@@ -116,31 +215,31 @@ const LandingPage = () => {
 
                 <Row gutter={[48, 48]}>
                     <Col xs={24} md={8}>
-                        <div style={{ padding: '20px' }} className="glass-appear">
+                        <TiltCard style={{ padding: '20px' }}>
                             <div style={{ width: '64px', height: '64px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
                                 <ThunderboltOutlined style={{ fontSize: '32px', color: 'var(--accent-blue)' }} />
                             </div>
                             <Title level={3} style={{ fontWeight: 800, letterSpacing: '-0.5px' }}>JIT Inventory</Title>
                             <Paragraph style={{ fontSize: '16px', color: 'var(--text-muted)' }}>Our Just-in-Time procurement ensures you get the freshest batches right when you need them, reducing your holding costs.</Paragraph>
-                        </div>
+                        </TiltCard>
                     </Col>
                     <Col xs={24} md={8}>
-                        <div style={{ padding: '20px', animationDelay: '0.1s' }} className="glass-appear">
+                        <TiltCard style={{ padding: '20px' }} delay="0.1s">
                             <div style={{ width: '64px', height: '64px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
                                 <SafetyCertificateOutlined style={{ fontSize: '32px', color: 'var(--accent-purple)' }} />
                             </div>
                             <Title level={3} style={{ fontWeight: 800, letterSpacing: '-0.5px' }}>Premium Logistics</Title>
                             <Paragraph style={{ fontSize: '16px', color: 'var(--text-muted)' }}>Temperature-controlled transport and sterilized packaging to maintain clinical integrity from warehouse to clinic.</Paragraph>
-                        </div>
+                        </TiltCard>
                     </Col>
                     <Col xs={24} md={8}>
-                        <div style={{ padding: '20px', animationDelay: '0.2s' }} className="glass-appear">
+                        <TiltCard style={{ padding: '20px' }} delay="0.2s">
                             <div style={{ width: '64px', height: '64px', background: 'rgba(236, 72, 153, 0.1)', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
                                 <RocketOutlined style={{ fontSize: '32px', color: 'var(--accent-pink)' }} />
                             </div>
                             <Title level={3} style={{ fontWeight: 800, letterSpacing: '-0.5px' }}>Smart Invoicing</Title>
                             <Paragraph style={{ fontSize: '16px', color: 'var(--text-muted)' }}>Digital GST-compliant billing with automated salesman records and organized delivery tracking.</Paragraph>
-                        </div>
+                        </TiltCard>
                     </Col>
                 </Row>
             </div>

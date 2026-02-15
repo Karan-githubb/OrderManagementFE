@@ -167,7 +167,7 @@ const Cart = ({ setCartCount, user }) => {
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 20px' }}>
-            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '20px' }}>
                 <div>
                     <Link to="/products" style={{ color: '#666', marginBottom: '8px', display: 'inline-block' }}>
                         <ArrowLeftOutlined /> Back to Catalog
@@ -195,13 +195,14 @@ const Cart = ({ setCartCount, user }) => {
             ) : (
                 <Row gutter={32}>
                     <Col xs={24} lg={16}>
-                        <Card variant="borderless" style={{ borderRadius: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }} styles={{ body: { padding: 0 } }}>
+                        <Card variant="borderless" style={{ borderRadius: '24px', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', marginBottom: '24px' }} styles={{ body: { padding: 0 } }}>
                             <Table
                                 dataSource={cartItems}
                                 columns={columns}
                                 pagination={false}
                                 rowKey="id"
                                 style={{ borderRadius: '24px', overflow: 'hidden' }}
+                                scroll={{ x: 'max-content' }}
                             />
                         </Card>
                     </Col>

@@ -30,6 +30,7 @@ const PublicProducts = ({ setCartCount }) => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
 
     useEffect(() => {
@@ -37,9 +38,15 @@ const PublicProducts = ({ setCartCount }) => {
     }, []);
 
     useEffect(() => {
+        const timer = setTimeout(() => {
+            setSearch(searchInput);
+        }, 500); // 500ms debounce
+        return () => clearTimeout(timer);
+    }, [searchInput]);
+
+    useEffect(() => {
         fetchProducts();
     }, [search, selectedCategory]);
-
     const fetchCategories = async () => {
         try {
             const res = await api.get('/products/categories/');
@@ -85,7 +92,7 @@ const PublicProducts = ({ setCartCount }) => {
     return (
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
             {/* Modern Hero Section */}
-            <div style={{
+            <div className="product-hero" style={{
                 position: 'relative',
                 height: '350px',
                 borderRadius: '24px',
@@ -102,10 +109,10 @@ const PublicProducts = ({ setCartCount }) => {
                     style={{ position: 'absolute', width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.6)' }}
                 />
                 <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', color: '#fff', padding: '0 20px' }}>
-                    <Title level={1} style={{ color: '#fff', fontSize: '48px', marginBottom: '16px', fontWeight: 800 }}>
+                    <Title level={1} className="product-hero-title" style={{ color: '#fff', fontSize: '48px', marginBottom: '16px', fontWeight: 800 }}>
                         Professional Medical Supplies
                     </Title>
-                    <Paragraph style={{ color: 'rgba(255,255,255,0.9)', fontSize: '18px', maxWidth: '700px', margin: '0 auto 30px' }}>
+                    <Paragraph className="product-hero-desc" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '18px', maxWidth: '700px', margin: '0 auto 30px' }}>
                         Trusted by over 500+ pharmacies. Discover high-grade surgical instruments,
                         consumables, and diagnostics at wholesale prices.
                     </Paragraph>
@@ -115,8 +122,11 @@ const PublicProducts = ({ setCartCount }) => {
                             allowClear
                             enterButton={<Button type="primary" size="large" icon={<SearchOutlined />}>Search</Button>}
                             size="large"
-                            onSearch={value => setSearch(value)}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            onSearch={value => setSearchInput(value)}
                             style={{ maxWidth: '600px', width: '100%' }}
+                            className="product-search"
                         />
                     </div>
                 </div>
@@ -134,21 +144,23 @@ const PublicProducts = ({ setCartCount }) => {
                 flexWrap: 'wrap',
                 gap: '20px',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-            }}>
-                <Space size="large">
+            }} className="filter-container">
+                <Space size="large" className="filter-group">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <AppstoreOutlined style={{ color: '#1677ff', fontSize: '18px' }} />
                         <Text strong>Categories:</Text>
                     </div>
-                    <Segmented
-                        options={categories}
-                        value={selectedCategory}
-                        onChange={setSelectedCategory}
-                        size="large"
-                        style={{ background: '#f5f5f5' }}
-                    />
+                    <div className="segmented-wrapper" style={{ overflowX: 'auto', maxWidth: '100%', WebkitOverflowScrolling: 'touch' }}>
+                        <Segmented
+                            options={categories}
+                            value={selectedCategory}
+                            onChange={setSelectedCategory}
+                            size="large"
+                            style={{ background: '#f5f5f5', minWidth: 'max-content' }}
+                        />
+                    </div>
                 </Space>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }} className="stats-group">
                     <Text type="secondary">{products.length} Products Found</Text>
                     <Tooltip title="ISO Certified Quality Supplies">
                         <CheckCircleFilled style={{ color: '#52c41a', fontSize: '20px' }} />
@@ -178,22 +190,21 @@ const PublicProducts = ({ setCartCount }) => {
                     </Empty>
                 </div>
             ) : (
-                <Row gutter={[24, 24]}>
+                <Row gutter={[24, 32]}>
                     {products.map(product => (
                         <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
                             <Card
                                 hoverable
-                                className="product-card"
+                                className="product-card glass-card"
                                 style={{
-                                    borderRadius: '20px',
-                                    overflow: 'hidden',
-                                    border: '1px solid #f0f0f0',
-                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    height: '100%'
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    border: 'none'
                                 }}
-                                styles={{ body: { padding: '20px' } }}
+                                styles={{ body: { padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' } }}
                                 cover={
-                                    <div style={{ position: 'relative', overflow: 'hidden', height: '240px', background: '#f8fafc' }}>
+                                    <div style={{ position: 'relative', overflow: 'hidden', height: '260px', borderRadius: '28px 28px 0 0' }}>
                                         <img
                                             alt={product.name}
                                             src={getImageUrl(product)}
@@ -204,83 +215,57 @@ const PublicProducts = ({ setCartCount }) => {
                                             style={{
                                                 height: '100%',
                                                 width: '100%',
-                                                objectFit: 'cover',
-                                                transition: 'transform 0.5s ease'
+                                                objectFit: 'cover'
                                             }}
                                             className="product-image"
                                         />
-                                        <div style={{ position: 'absolute', top: 15, left: 15 }}>
-                                            <Tag color="#1677ff" style={{ borderRadius: '6px', border: 'none', padding: '2px 10px', fontWeight: 600 }}>
-                                                {product.category_name}
-                                            </Tag>
-                                        </div>
-                                        {product.stock_quantity < 10 && product.stock_quantity > 0 && (
-                                            <div style={{ position: 'absolute', bottom: 10, left: 15 }}>
-                                                <Tag color="orange" style={{ borderRadius: '4px' }}>LOW STOCK</Tag>
-                                            </div>
-                                        )}
-                                        {product.stock_quantity === 0 && (
+                                        <div style={{ position: 'absolute', top: 16, left: 16 }}>
                                             <div style={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                width: '100%',
-                                                height: '100%',
-                                                background: 'rgba(255,255,255,0.7)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
+                                                background: 'rgba(255,255,255,0.9)',
+                                                backdropFilter: 'blur(8px)',
+                                                padding: '4px 12px',
+                                                borderRadius: '10px',
+                                                fontSize: '11px',
+                                                fontWeight: 700,
+                                                color: 'var(--accent-blue)',
+                                                boxShadow: '0 4px 10px rgba(0,0,0,0.05)'
                                             }}>
-                                                <Tag color="red" style={{ fontSize: '14px', padding: '5px 15px' }}>OUT OF STOCK</Tag>
+                                                {product.category_name}
                                             </div>
-                                        )}
+                                        </div>
+                                        {/* Removed EXHAUSTED overlay - allow ordering even with 0 stock */}
                                     </div>
                                 }
                             >
-                                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <Title level={4} style={{ margin: 0, fontSize: '18px', fontWeight: 700 }} ellipsis={{ rows: 2 }}>
-                                            {product.name}
-                                        </Title>
-                                        <Paragraph type="secondary" style={{ fontSize: '13px', marginTop: '8px' }} ellipsis={{ rows: 2 }}>
-                                            High quality surgical grade {product.name.toLowerCase()} for clinical use.
-                                        </Paragraph>
-                                    </div>
+                                <div style={{ flex: 1 }}>
+                                    <Title level={4} style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: 800, color: '#0f172a' }} ellipsis={{ rows: 2 }}>
+                                        {product.name}
+                                    </Title>
+                                    <Text type="secondary" style={{ fontSize: '13px', lineHeight: '1.5' }} ellipsis={{ rows: 2 }}>
+                                        Professional grade {product.name.toLowerCase()} sourced for high-precision surgical utility.
+                                    </Text>
 
-                                    <div style={{ marginTop: 'auto' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                                            <div>
-                                                <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                                                    <Text style={{ fontSize: '24px', fontWeight: 800, color: '#1a1a1a' }}>₹{product.selling_price}</Text>
-                                                    <Text delete type="secondary" style={{ fontSize: '14px' }}>₹{product.mrp}</Text>
-                                                </div>
-                                                <Text type="success" style={{ fontSize: '12px', fontWeight: 600 }}>
-                                                    Save {Math.round((product.mrp - product.selling_price) / product.mrp * 100)}%
-                                                </Text>
-                                            </div>
-                                            <Tooltip title="View Specifications">
-                                                <Button type="text" shape="circle" icon={<InfoCircleOutlined style={{ color: '#bfbfbf' }} />} />
-                                            </Tooltip>
-                                        </div>
-
-                                        <Button
-                                            type="primary"
-                                            size="large"
-                                            icon={<ShoppingCartOutlined />}
-                                            onClick={() => addToCart(product)}
-                                            disabled={product.stock_quantity === 0}
-                                            block
-                                            style={{
-                                                borderRadius: '12px',
-                                                height: '48px',
-                                                fontWeight: 600,
-                                                boxShadow: '0 4px 12px rgba(22, 119, 255, 0.3)'
-                                            }}
-                                        >
-                                            {product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
-                                        </Button>
+                                    <div style={{ margin: '20px 0', display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                                        <Text style={{ fontSize: '24px', fontWeight: 900, color: 'var(--accent-blue)' }}>₹{product.selling_price}</Text>
+                                        <Text delete type="secondary" style={{ fontSize: '14px' }}>₹{product.mrp}</Text>
                                     </div>
                                 </div>
+
+                                <Button
+                                    type="primary"
+                                    size="large"
+                                    icon={<ShoppingCartOutlined />}
+                                    onClick={() => addToCart(product)}
+                                    block
+                                    style={{
+                                        borderRadius: '16px',
+                                        height: '52px',
+                                        fontSize: '15px',
+                                        boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)'
+                                    }}
+                                >
+                                    {product.stock_quantity === 0 ? 'Pre-Order Now' : 'Add to Cart'}
+                                </Button>
                             </Card>
                         </Col>
                     ))}
