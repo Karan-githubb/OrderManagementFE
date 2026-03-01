@@ -143,17 +143,14 @@ const Login = ({ fetchUser }) => {
                         requiredMark={false}
                     >
                         <Form.Item
-                            label={<Text strong style={{ fontSize: '12px', textTransform: 'uppercase', color: '#64748b' }}>Email Address</Text>}
-                            name="email"
-                            rules={[
-                                { required: true, message: 'Email required to proceed' },
-                                { type: 'email', message: 'Please enter a valid email' }
-                            ]}
+                            label={<Text strong style={{ fontSize: '12px', textTransform: 'uppercase', color: '#64748b' }}>Username</Text>}
+                            name="username"
+                            rules={[{ required: true, message: 'Username is required' }]}
                             style={{ marginBottom: '24px' }}
                         >
                             <Input
                                 prefix={<UserOutlined style={{ color: '#94a3b8' }} />}
-                                placeholder="name@pharmacy.com"
+                                placeholder="Enter your username"
                                 size="large"
                                 style={{ borderRadius: '12px', padding: '12px' }}
                             />
@@ -163,11 +160,11 @@ const Login = ({ fetchUser }) => {
                             label={
                                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                     <Text strong style={{ fontSize: '12px', textTransform: 'uppercase', color: '#64748b' }}>Password</Text>
-                                    <Link to="/forgot-password" style={{ fontSize: '12px', fontWeight: 600 }}>Forgot Access?</Link>
+                                    <Link to="/forgot-password" style={{ fontSize: '12px', fontWeight: 600 }}>Forgot password?</Link>
                                 </div>
                             }
                             name="password"
-                            rules={[{ required: true, message: 'Secure key required' }]}
+                            rules={[{ required: true, message: 'Password is required' }]}
                         >
                             <Input.Password
                                 prefix={<LockOutlined style={{ color: '#94a3b8' }} />}
@@ -187,10 +184,22 @@ const Login = ({ fetchUser }) => {
                                 icon={<ArrowRightOutlined />}
                                 style={{ height: '56px', borderRadius: '14px', fontSize: '16px', fontWeight: 600 }}
                             >
-                                Authorize & Login
+                                Sign in
                             </Button>
                         </Form.Item>
                     </Form>
+
+                    <Divider plain style={{ margin: '40px 0' }}><Text type="secondary" style={{ fontSize: '12px' }}>OR</Text></Divider>
+
+                    <div style={{ textAlign: 'center', marginBottom: 24 }}>
+                        <Text type="secondary">Browse our catalog without signing in.</Text>
+                        <br />
+                        <Link to="/products">
+                            <Button type="default" size="large" style={{ marginTop: 12, borderRadius: 8 }}>
+                                Browse products
+                            </Button>
+                        </Link>
+                    </div>
 
                     <Divider plain style={{ margin: '40px 0' }}><Text type="secondary" style={{ fontSize: '12px' }}>NEW PARTNER?</Text></Divider>
 

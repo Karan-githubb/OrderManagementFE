@@ -1,5 +1,10 @@
+/* B2B SaaS Design System – Medical Distribution Platform */
+/* 8px grid: spacing units are multiples of 8 (8, 16, 24, 32, 40, 48) */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+@import './styles/design-tokens.css';
+
 :root {
-  /* Ultra-Premium Glass Palette */
   --glass-primary: rgba(59, 130, 246, 0.9);
   --glass-bg: rgba(255, 255, 255, 0.45);
   --glass-bg-dark: rgba(15, 23, 42, 0.1);

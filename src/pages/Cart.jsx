@@ -111,7 +111,7 @@ const Cart = ({ setCartCount, user }) => {
                     <Avatar
                         shape="square"
                         size={80}
-                        src={record.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=200'}
+                        src={record.image_url || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=200'}
                         style={{ borderRadius: '8px' }}
                     />
                     <div>
